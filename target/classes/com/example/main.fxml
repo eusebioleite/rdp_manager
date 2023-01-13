@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.boozy.MainController">
+  <children>
+    <MenuBar VBox.vgrow="NEVER">
+      <menus>
+        <Menu fx:id="menu_options" mnemonicParsing="false" text="Options...">
+          <items>
+            <MenuItem fx:id="menu_new" mnemonicParsing="false" text="New..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="menu_import" mnemonicParsing="false" text="Import" />
+            <MenuItem fx:id="menu_export" mnemonicParsing="false" text="Export" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="menu_types" mnemonicParsing="false" text="Connection Types" />
+                  <MenuItem fx:id="menu_companies" mnemonicParsing="false" text="Companies" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="menu_settings" mnemonicParsing="false" text="Settings..." />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <AnchorPane prefHeight="75.0" prefWidth="640.0">
+         <children>
+            <ComboBox fx:id="filter_type" layoutX="5.0" layoutY="40.0" prefHeight="25.0" prefWidth="180.0" promptText="Filter by..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="455.0" AnchorPane.topAnchor="40.0" />
+            <ComboBox fx:id="filter_data" layoutX="190.0" layoutY="40.0" prefHeight="25.0" prefWidth="180.0" />
+            <TextField fx:id="search_bar" layoutX="5.0" layoutY="10.0" maxWidth="630.0" prefHeight="25.0" prefWidth="630.0" promptText="Search..." AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+         </children>
+      </AnchorPane>
+      <ScrollPane prefHeight="300.0" prefWidth="640.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="640.0">
+               <children>
+                  <TableView fx:id="data_table" prefHeight="300.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="id_column" maxWidth="30.0" prefWidth="30.0" text="ID" />
+                      <TableColumn fx:id="description_column" maxWidth="200.0" prefWidth="200.0" text="DESCRIPTION" />
+                        <TableColumn fx:id="type_column" maxWidth="100.0" minWidth="5.0" prefWidth="100.0" text="TYPE" />
+                        <TableColumn fx:id="company_column" maxWidth="100.0" prefWidth="100.0" text="COMPANY" />
+                        <TableColumn fx:id="connectioninfo_column" maxWidth="200.0" prefWidth="200.0" text="CONNECTION_INFO" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+  </children>
+</VBox>

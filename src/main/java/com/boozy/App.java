@@ -1,39 +1,26 @@
 package com.boozy;
 
 import javafx.application.Application;
-import javafx.scene.Parent;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-// import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-// import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class App extends Application {
 
-    private Parent createContent() {
-        Rectangle box = new Rectangle(100, 50, Color.BLUE);
-
-        transform(box);
-
-        return new Pane(box);
-    }
-
-    private void transform(Rectangle box) {
-        box.setTranslateX(100);
-        box.setTranslateY(200);
-
-    }
+    private static Scene scene;
 
     @Override
-    public void start(Stage stage) throws Exception {
-        stage.setScene(new Scene(createContent(), 800, 600, Color.WHITE));
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
+        scene = new Scene(fxmlLoader.load(), 640, 400);
+        stage.setTitle("RDP Manager");
+        stage.setScene(scene);
         stage.show();
     }
-
     public static void main(String[] args) {
-        launch(args);
+        launch();
     }
 
 }
