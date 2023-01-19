@@ -13,14 +13,22 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+
+        /* load fxml */
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
+        
+        /* create scene */
         scene = new Scene(fxmlLoader.load(), 640, 400);
         stage.setTitle("RDP Manager");
         stage.setScene(scene);
         stage.show();
+
     }
+
     public static void main(String[] args) {
+
         launch();
+        
     }
 
 }

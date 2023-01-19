@@ -2,7 +2,7 @@ module com.boozy {
     requires java.sql;
     requires javafx.controls;
     requires javafx.fxml;
-
+    
     opens com.boozy to javafx.fxml;
     exports com.boozy;
 }

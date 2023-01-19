@@ -65,7 +65,7 @@
     </MenuBar>
       <AnchorPane prefHeight="75.0" prefWidth="640.0">
          <children>
-            <ComboBox fx:id="filter_type" layoutX="5.0" layoutY="40.0" prefHeight="25.0" prefWidth="180.0" promptText="Filter by..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="455.0" AnchorPane.topAnchor="40.0" />
+            <ComboBox fx:id="filter_type" layoutX="5.0" layoutY="40.0" onAction="#actionFilterType" prefHeight="25.0" prefWidth="180.0" promptText="Filter by..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="455.0" AnchorPane.topAnchor="40.0" />
             <ComboBox fx:id="filter_data" layoutX="190.0" layoutY="40.0" prefHeight="25.0" prefWidth="180.0" />
             <TextField fx:id="search_bar" layoutX="5.0" layoutY="10.0" maxWidth="630.0" prefHeight="25.0" prefWidth="630.0" promptText="Search..." AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
          </children>
@@ -74,7 +74,7 @@
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="640.0">
                <children>
-                  <TableView fx:id="data_table" prefHeight="300.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TableView fx:id="data_table" editable="true" prefHeight="300.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
                       <TableColumn fx:id="id_column" maxWidth="30.0" prefWidth="30.0" text="ID" />
                       <TableColumn fx:id="description_column" maxWidth="200.0" prefWidth="200.0" text="DESCRIPTION" />

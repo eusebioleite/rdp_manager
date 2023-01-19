@@ -1,9 +1,17 @@
 package com.boozy;
 
 import java.sql.*;
+import java.text.Format;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.boozy.tables.Types;
+import com.boozy.tables.view.RdpView;
+import com.boozy.tables.Company;
+import com.boozy.tables.Rdp;
 
 public class Sqlite_JDBC_Connector {
-    private static String db_path = "'C:\\projects\\New folder\\demo\\db\\rdp_manager.db'";
+    private static String db_path = "C:\\projects\\rdp_manager\\db\\rdp_manager.db";
     private static String jdbc_string = "jdbc:sqlite:" + db_path;
 
     public static void create_tables() {
@@ -14,23 +22,23 @@ public class Sqlite_JDBC_Connector {
             Statement statement = connection.createStatement();
 
             /* rdp */
-            statement.execute("CREATE TABLE rdp (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar, type_id INTEGER, company_id INTEGER,	connection_info varchar, CONSTRAINT rdp_FK_1 FOREIGN KEY (type_id) REFERENCES types(id), CONSTRAINT rdp_FK_2 FOREIGN KEY (company_id) REFERENCES companies(id))");
+            statement.execute("CREATE TABLE IF NOT EXISTS rdp (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar, types_id INTEGER, company_id INTEGER,	connection_info varchar, CONSTRAINT rdp_FK_1 FOREIGN KEY (types_id) REFERENCES types(id), CONSTRAINT rdp_FK_2 FOREIGN KEY (company_id) REFERENCES company(id))");
             /* connection types */
-            statement.execute("CREATE if not exists TABLE type (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar)");
-            /* companies */
-            statement.execute("CREATE if not exists TABLE company (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar)");
+            statement.execute("CREATE TABLE IF NOT EXISTS types (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar)");
+            /* company */
+            statement.execute("CREATE TABLE IF NOT EXISTS company (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar)");
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void post_rdp(String description, String type_id, String company_id, String connection_info){
+    public static void post_rdp(String description, String types_id, String company_id, String connection_info){
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
             /* post into rdp */
             Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO rdp (description,type_id,company_id,connection_info) VALUES ('" + String.format("'%s', '%s', '%s', '%s'", description, type_id, company_id , connection_info));
+            statement.execute("INSERT INTO rdp (description,types_id,company_id,connection_info) VALUES ('" + String.format("'%s', '%s', '%s', '%s'", description, types_id, company_id , connection_info));
         
         } catch (Exception e) {
 
@@ -40,12 +48,12 @@ public class Sqlite_JDBC_Connector {
 
     }
 
-    public void post_type(String description){
+    public static void post_types(String description){
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
-            /* post into type */
+            /* post into types */
             Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO type (description) VALUES ('" + String.format("'%s'", description));
+            statement.execute("INSERT INTO types (description) VALUES ('" + String.format("'%s'", description));
             
         } catch (Exception e) {
 
@@ -55,7 +63,7 @@ public class Sqlite_JDBC_Connector {
 
     }
 
-    public void post_company(String description){
+    public static void post_company(String description){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
@@ -71,13 +79,13 @@ public class Sqlite_JDBC_Connector {
 
     }
 
-    public void put_rdp(String id, String description, String type_id, String company_id, String connection_info){
+    public static void put_rdp(String id, String description, String types_id, String company_id, String connection_info){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
             /* update rdp query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("update rdp set description = '%s', type_id = '%s', company_id = '%s', connection_info = '%s' where rdp.id = '%s'", description, type_id, company_id, connection_info, id));
+            statement.execute(String.format("update rdp set description = '%s', types_id = '%s', company_id = '%s', connection_info = '%s' where rdp.id = '%s'", description, types_id, company_id, connection_info, id));
             
         } catch (Exception e) {
 
@@ -86,13 +94,13 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public void put_type(String id, String description){
+    public static void put_types(String id, String description){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
-            /* update type query */
+            /* update types query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("update type set description = '%s' where type.id = '%s'", description, id));
+            statement.execute(String.format("update types set description = '%s' where types.id = '%s'", description, id));
             
         } catch (Exception e) {
 
@@ -101,7 +109,7 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public void put_company(String id, String description){
+    public static void put_company(String id, String description){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
@@ -116,7 +124,7 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public void delete_rdp(String id){
+    public static void delete_rdp(String id){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
@@ -131,13 +139,13 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public void delete_type(String id){
+    public static void delete_types(String id){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
-            /* update type query */
+            /* update types query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("delete from type where type.id = '%s'", id));
+            statement.execute(String.format("delete from types where types.id = '%s'", id));
             
         } catch (Exception e) {
 
@@ -146,7 +154,7 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public void delete_company(String id){
+    public static void delete_company(String id){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
@@ -161,27 +169,37 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public String get_rdp(){
+    public static ArrayList<Rdp> get_rdp(){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
-            
-            String get_all = "";
+
+            /* response body */            
+            ArrayList<Rdp> response = new ArrayList<Rdp>();
 
             /* get all rdp query */
             PreparedStatement prepared_statement = connection.prepareStatement("select * from rdp");
             ResultSet result_set = prepared_statement.executeQuery();
             
-            get_all += "{";
             while (result_set.next()) {
-                get_all += "{";
-                get_all += String.format("id:%s, description:'%s',type_id:'%s',company_id:'%s',connection_info:'%s'", result_set.getInt("id"), result_set.getString("description"), result_set.getString("type_id"), result_set.getString("company_id"), result_set.getString("connection_info"));
-                get_all += "}";
-                get_all += ",";
+                
+                /* assign data to response body */
+                Rdp rdp = new Rdp(
+                    result_set.getInt("id"), 
+                    result_set.getString("description"), 
+                    result_set.getInt("types_id"), 
+                    result_set.getInt("company_id"), 
+                    result_set.getString("connection_info")
+                );
+                response.add(rdp);
+
             }
-            get_all.substring(0, get_all.length()-1);
-            get_all += "}";
-            
-            return get_all;
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
 
         } catch (Exception e) {
 
@@ -190,26 +208,42 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public String get_type(){
+    public static ArrayList<RdpView> get_rdpview(){
+
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* response body */
+            ArrayList<RdpView> response = new ArrayList<RdpView>();
 
-            String get_all = "";
-
-            /* get all type query */
-            PreparedStatement prepared_statement = connection.prepareStatement("select * from type");
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(
+                "select rdp.id, rdp.description, types.description as 'types_description', company.description as 'company_description', rdp.connection_info from rdp " +
+                "inner join types on rdp.types_id = types.id inner join company on rdp.company_id = company.id");
+            
+            /* execute query */
             ResultSet result_set = prepared_statement.executeQuery();
             
-            get_all += "{";
             while (result_set.next()) {
-                get_all += "{";
-                get_all += String.format("id:%s, description:'%s',", result_set.getInt("id"), result_set.getString("description"));
-                get_all += "}";
-                get_all += ",";
+
+                /* assign values to response body */
+                RdpView rdpview = new RdpView(
+                    String.valueOf(result_set.getInt("id")), 
+                    result_set.getString("description"), 
+                    result_set.getString("types_description"),
+                    result_set.getString("company_description"),
+                    result_set.getString("connection_info")
+                );
+                response.add(rdpview);
+
             }
-            get_all.substring(0, get_all.length()-1);
-            get_all += "}";
-            
-            return get_all;
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
 
         } catch (Exception e) {
 
@@ -218,27 +252,190 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public String get_company(){
+    public static ArrayList<Types> get_types(){
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response body */            
+            ArrayList<Types> response = new ArrayList<Types>();
+            
+            /* create query */
+            PreparedStatement prepared_statement = connection.prepareStatement("select * from types");
+            
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                Types types = new Types(
+                    result_set.getInt("id"), 
+                    result_set.getString("description")
+                );
+                response.add(types);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+            
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Company> get_company(){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
 
-            String get_all = "";
+            /* response body */
+            ArrayList<Company> response = new ArrayList<Company>();
+
+            /* create query */
+            PreparedStatement prepared_statement = connection.prepareStatement("select * from company");
+            
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                Company company = new Company(
+                    result_set.getInt("id"), 
+                    result_set.getString("description")
+                    );
+                response.add(company);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static Rdp get_rdp_by_id(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response body */            
+            Rdp rdp = null;
+
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement("select * from rdp where rdp.id = " + id.toString());
+            
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                rdp = new Rdp(
+                    result_set.getInt("id"), 
+                    result_set.getString("description"), 
+                    result_set.getInt("types_id"), 
+                    result_set.getInt("company_id"), 
+                    result_set.getString("connection_info")
+                );
+            
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return rdp;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static Types get_types_by_id(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response */
+            Types types = null;
+
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(String.format("select * from types where types.id = %d", id));
+            
+            /* execute query */            
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                types = new Types(
+                    result_set.getInt("id"), 
+                    result_set.getString("description")
+                );
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return types;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static Company get_company_by_id(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response body */
+            Company company = null;
 
             /* get all company query */
-            PreparedStatement prepared_statement = connection.prepareStatement("select * from company");
+            PreparedStatement prepared_statement = connection.prepareStatement("select * from company where company.id = " + id.toString());
+            
+            /* create query */
             ResultSet result_set = prepared_statement.executeQuery();
             
-            get_all += "{";
             while (result_set.next()) {
-                get_all += "{";
-                get_all += String.format("id:%s, description:'%s',", result_set.getInt("id"), result_set.getString("description"));
-                get_all += "}";
-                get_all += ",";
-            }
-            get_all.substring(0, get_all.length()-1);
-            get_all += "}";
+
+                /* assign data to response body */
+                company = new Company(
+                    result_set.getInt("id"), 
+                    result_set.getString("description")
+                );
             
-            return get_all;
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return company;
 
         } catch (Exception e) {
 
@@ -246,4 +443,54 @@ public class Sqlite_JDBC_Connector {
             return null;
         }
     }
+
+    public static ArrayList<RdpView> get_rdpview_by_string(String string){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* response body */
+            ArrayList<RdpView> response = new ArrayList<RdpView>();
+            
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(
+                "select rdp.id, rdp.description, types.description as 'types_description', company.description as 'company_description', rdp.connection_info from rdp " +
+                "inner join types on rdp.types_id = types.id inner join company on rdp.company_id = company.id " +
+                "where rdp.description like \"%" + string + 
+                "%\" or types.description like \"%" + string + 
+                "%\" or company.description like \"%" + string + 
+                "%\" or rdp.connection_info like \"%" + string + 
+                "%\""
+            );
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign values to response body */
+                RdpView rdpview = new RdpView(
+                    String.valueOf(result_set.getInt("id")), 
+                    result_set.getString("description"), 
+                    result_set.getString("types_description"),
+                    result_set.getString("company_description"),
+                    result_set.getString("connection_info")
+                );
+                response.add(rdpview);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
 }
