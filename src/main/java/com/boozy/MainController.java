@@ -248,24 +248,6 @@ public class MainController {
     }
 
     @FXML
-    private void actionSave(){
-        
-        for(RdpView row : data_table.getItems()){
-            System.out.println(row.getDescription());
-/*
-            Sqlite_JDBC_Connector.put_rdp(
-                row.getId(), 
-                row.getDescription(), 
-                Sqlite_JDBC_Connector.get_types_by_description(row.getTypes_description()).getId().toString(), 
-                Sqlite_JDBC_Connector.get_company_by_description(row.getCompany_description()).getId().toString(), 
-                row.getConnection_info()
-            );
-*/
-        }
-
-    }
-
-    @FXML
     public void onEditCommitData_Table(CellEditEvent<?,?> event){
 
         switch(event.getTableColumn().idProperty().getValue().toString()){
