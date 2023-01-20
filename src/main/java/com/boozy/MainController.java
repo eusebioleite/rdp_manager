@@ -188,6 +188,54 @@ public class MainController {
     }
     
     @FXML
+    public void actionFilterData(ActionEvent e){
+        if (filter_type.getSelectionModel().getSelectedItem().toString() == "Connection Type"){
+
+            /* read data from db and insert into tableview */
+            ArrayList<RdpView> rdpview = 
+            Sqlite_JDBC_Connector.get_rdpview_by_type(
+                Sqlite_JDBC_Connector.get_types_by_description(filter_data.getSelectionModel().getSelectedItem().toString()).getId().toString());
+
+            data_table.getItems().clear();
+            for(RdpView rdpview_row : rdpview){
+
+                data_table.getItems().add(
+                    new RdpView(
+                        rdpview_row.getId(), 
+                        rdpview_row.getDescription(), 
+                        rdpview_row.getTypes_description(), 
+                        rdpview_row.getCompany_description(), 
+                        rdpview_row.getConnection_info()
+                    )
+                );
+
+            }
+        } else {
+
+            /* read data from db and insert into tableview */
+            ArrayList<RdpView> rdpview = 
+            Sqlite_JDBC_Connector.get_rdpview_by_company(
+                Sqlite_JDBC_Connector.get_company_by_description(filter_data.getSelectionModel().getSelectedItem().toString()).getId().toString());
+
+            data_table.getItems().clear();
+            for(RdpView rdpview_row : rdpview){
+
+                data_table.getItems().add(
+                    new RdpView(
+                        rdpview_row.getId(), 
+                        rdpview_row.getDescription(), 
+                        rdpview_row.getTypes_description(), 
+                        rdpview_row.getCompany_description(), 
+                        rdpview_row.getConnection_info()
+                    )
+                );
+
+            }
+        }
+
+    }
+
+    @FXML
     private void actionAdd(){
         
         /* Insert empty row */
@@ -244,7 +292,6 @@ public class MainController {
     @FXML
     private void actionGo(){
 
-        System.out.println(data_table.getSelectionModel().getSelectedItem().getId());
     }
 
     @FXML

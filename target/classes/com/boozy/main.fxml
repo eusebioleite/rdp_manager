@@ -68,7 +68,7 @@
       <AnchorPane prefHeight="75.0" prefWidth="640.0">
          <children>
             <ComboBox fx:id="filter_type" layoutX="5.0" layoutY="40.0" onAction="#actionFilterType" prefHeight="25.0" prefWidth="180.0" promptText="Filter by..." AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="455.0" AnchorPane.topAnchor="40.0" />
-            <ComboBox fx:id="filter_data" layoutX="190.0" layoutY="40.0" prefHeight="25.0" prefWidth="180.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="190.0" AnchorPane.rightAnchor="270.0" AnchorPane.topAnchor="40.0" />
+            <ComboBox fx:id="filter_data" layoutX="190.0" layoutY="40.0" onAction="#actionFilterData" prefHeight="25.0" prefWidth="180.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="190.0" AnchorPane.rightAnchor="270.0" AnchorPane.topAnchor="40.0" />
             <TextField fx:id="search_bar" layoutX="5.0" layoutY="10.0" maxWidth="630.0" prefHeight="25.0" prefWidth="630.0" promptText="Search..." AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
             <Button fx:id="del_btn" layoutX="585.0" layoutY="40.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#actionDel" prefHeight="25.0" prefWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="40.0" />
             <Button fx:id="add_btn" layoutX="547.0" layoutY="40.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#actionAdd" prefHeight="25.0" prefWidth="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="535.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="40.0" />
