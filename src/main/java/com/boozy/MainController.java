@@ -1,31 +1,53 @@
 package com.boozy;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
-import java.util.Collection;
-
 import com.boozy.tables.*;
 import com.boozy.tables.view.*;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+
 public class MainController {
+
+    private EventHandler<KeyEvent> keyHandler;
 
     @FXML
     private TextField search_bar = new TextField();
+    
+    /* add button */
+    @FXML
+    private Button add_btn = new Button("add");
+
+    /* delete button */
+    @FXML
+    private Button del_btn = new Button("del");
+
+    /* go button */
+    @FXML
+    private Button go_btn = new Button("go");
 
     @FXML
     private ComboBox<String> filter_type = new ComboBox<String>();
@@ -51,18 +73,28 @@ public class MainController {
     @FXML
     private TableColumn<RdpView, String> connectioninfo_column = new TableColumn<>();
 
-
-
     @FXML
     private void initialize(){
-        
+
+        /* set icons */
+        add_btn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PLUS));
+        del_btn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.TIMES));
+        go_btn.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.ARROW_RIGHT));
+
+        /* load combobox */
+        loadFilterType();
+
+        /* load tableview */
+        loadTable();
+
+        /* search_bar listener */
         search_bar.textProperty().addListener((object, oldValue, newValue) -> {
             if (newValue.length() > oldValue.length()) {
-
+                
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
-                ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string("IIS");
+                ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string(object.getValue());
 
                 for(RdpView rdpview_row : rdpview){
 
@@ -83,7 +115,7 @@ public class MainController {
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
-                ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string("IIS");
+                ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string(object.getValue());
 
                 for(RdpView rdpview_row : rdpview){
 
@@ -102,10 +134,7 @@ public class MainController {
             }
 
         });
-        
-        loadFilterType();
-
-        loadTable();
+    
     }
 
     private void loadFilterType(){
@@ -157,7 +186,151 @@ public class MainController {
         }
 
     }
+    
+    @FXML
+    private void actionAdd(){
+        
+        /* Insert empty row */
+        Sqlite_JDBC_Connector.post_rdp("your description...", "1", "1", "0.0.0.0");
+        
+        /* clear data_table */
+        data_table.getItems().clear();
 
+        /* read data from db and insert into tableview */
+        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+
+        for(RdpView rdpview_row : rdpview){
+
+            data_table.getItems().add(
+                new RdpView(
+                    rdpview_row.getId(), 
+                    rdpview_row.getDescription(), 
+                    rdpview_row.getTypes_description(), 
+                    rdpview_row.getCompany_description(), 
+                    rdpview_row.getConnection_info()
+                )
+            );
+
+        }
+    }
+    
+    @FXML
+    private void actionDel(){
+
+        Sqlite_JDBC_Connector.delete_rdp(data_table.getSelectionModel().getSelectedItem().getId());
+
+        /* clear data_table */
+        data_table.getItems().clear();
+
+        /* read data from db and insert into tableview */
+        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+
+        for(RdpView rdpview_row : rdpview){
+
+            data_table.getItems().add(
+                new RdpView(
+                    rdpview_row.getId(), 
+                    rdpview_row.getDescription(), 
+                    rdpview_row.getTypes_description(), 
+                    rdpview_row.getCompany_description(), 
+                    rdpview_row.getConnection_info()
+                )
+            );
+
+        }
+
+    }
+
+    @FXML
+    private void actionGo(){
+
+        System.out.println(data_table.getSelectionModel().getSelectedItem().getId());
+    }
+
+    @FXML
+    private void actionSave(){
+        
+        for(RdpView row : data_table.getItems()){
+            System.out.println(row.getDescription());
+/*
+            Sqlite_JDBC_Connector.put_rdp(
+                row.getId(), 
+                row.getDescription(), 
+                Sqlite_JDBC_Connector.get_types_by_description(row.getTypes_description()).getId().toString(), 
+                Sqlite_JDBC_Connector.get_company_by_description(row.getCompany_description()).getId().toString(), 
+                row.getConnection_info()
+            );
+*/
+        }
+
+    }
+
+    @FXML
+    public void onEditCommitData_Table(CellEditEvent<?,?> event){
+
+        switch(event.getTableColumn().idProperty().getValue().toString()){
+
+            case "description_column":
+                Sqlite_JDBC_Connector.put_rdp(
+                    data_table.getSelectionModel().getSelectedItem().getId(), 
+                    event.getNewValue().toString(), 
+                    Sqlite_JDBC_Connector.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
+                    Sqlite_JDBC_Connector.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    data_table.getSelectionModel().getSelectedItem().getConnection_info()
+                );
+                break;
+            
+            case "type_column":
+                Sqlite_JDBC_Connector.put_rdp(
+                    data_table.getSelectionModel().getSelectedItem().getId(), 
+                    data_table.getSelectionModel().getSelectedItem().getDescription(), 
+                    Sqlite_JDBC_Connector.get_types_by_description(event.getNewValue().toString()).getId().toString(), 
+                    Sqlite_JDBC_Connector.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    data_table.getSelectionModel().getSelectedItem().getConnection_info()
+                );
+                break;
+            
+            case "company_column":
+                Sqlite_JDBC_Connector.put_rdp(
+                    data_table.getSelectionModel().getSelectedItem().getId(), 
+                    data_table.getSelectionModel().getSelectedItem().getDescription(), 
+                    Sqlite_JDBC_Connector.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
+                    Sqlite_JDBC_Connector.get_company_by_description(event.getNewValue().toString()).getId().toString(), 
+                    data_table.getSelectionModel().getSelectedItem().getConnection_info()
+                );
+                break;
+            
+            case "connectioninfo_column":
+                Sqlite_JDBC_Connector.put_rdp(
+                    data_table.getSelectionModel().getSelectedItem().getId(), 
+                    data_table.getSelectionModel().getSelectedItem().getDescription(), 
+                    Sqlite_JDBC_Connector.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
+                    Sqlite_JDBC_Connector.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    event.getNewValue().toString()
+                );
+                break;
+            
+        }
+
+        /* read data from db and insert into tableview */
+        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+
+        data_table.getItems().clear();
+        for(RdpView rdpview_row : rdpview){
+
+            data_table.getItems().add(
+                new RdpView(
+                    rdpview_row.getId(), 
+                    rdpview_row.getDescription(), 
+                    rdpview_row.getTypes_description(), 
+                    rdpview_row.getCompany_description(), 
+                    rdpview_row.getConnection_info()
+                )
+            );
+
+        }
+    }
+    
     private void loadTable(){
 
         /* load id columns */
@@ -165,6 +338,7 @@ public class MainController {
         id_column.setCellFactory(TextFieldTableCell.<RdpView>forTableColumn());
 
         /* load description column */
+        
         description_column.setCellValueFactory(new PropertyValueFactory<>("Description"));
         description_column.setCellFactory(TextFieldTableCell.<RdpView>forTableColumn());
 

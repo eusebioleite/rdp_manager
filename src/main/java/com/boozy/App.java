@@ -3,8 +3,12 @@ package com.boozy;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class App extends Application {
@@ -21,6 +25,7 @@ public class App extends Application {
         scene = new Scene(fxmlLoader.load(), 640, 400);
         stage.setTitle("RDP Manager");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
 
     }

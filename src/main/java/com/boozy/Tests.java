@@ -1,32 +1,51 @@
 package com.boozy;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import de.jensd.fx.glyphs.fontawesome.utils.FontAwesomeIconFactory;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
-import java.util.ArrayList;
+public class Tests extends Application {
 
-import com.boozy.tables.Company;
-import com.boozy.tables.Rdp;
-import com.boozy.tables.Types;
-import com.boozy.tables.view.RdpView;
+    @Override
+    public void start(Stage primaryStage) {
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-public class Tests {
-    
-    public static void main(String[] args) {
-        
-        /* read data from db and insert into tableview */
-        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string("IIS");
-        
-        for(RdpView rdpview_row : rdpview){
-
-            System.out.println("id: " + rdpview_row.getId());
-            System.out.println("description: " + rdpview_row.getDescription());
-            System.out.println("type: " + rdpview_row.getTypes_description());
-            System.out.println("company: " + rdpview_row.getCompany_description());
-            System.out.println("connection_info: " + rdpview_row.getConnection_info());
-
+        HBox buttonBox1 = new HBox();
+        for (int i = 0; i < 10; i++) {
+            ToggleButton toggle1 = new ToggleButton();
+            FontAwesomeIconView iconView = new FontAwesomeIconView(FontAwesomeIcon.ANGELLIST);
+            //iconView.setGlyphSize(42.0);
+            toggle1.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            toggle1.setGraphic(iconView);
+            buttonBox1.getChildren().add(toggle1);
         }
+
+        HBox buttonBox2 = new HBox();
+        for (int i = 0; i < 10; i++) {
+            ToggleButton toggle1 = FontAwesomeIconFactory.get().createIconToggleButton(FontAwesomeIcon.ANGELLIST, "", "2em");
+            buttonBox2.getChildren().add(toggle1);
+        }
+
+        FlowPane iconsPane = new FlowPane(3, 3);
+        iconsPane.getChildren().add(buttonBox1);
+        iconsPane.getChildren().add(buttonBox2);
+        for (FontAwesomeIcon icon : FontAwesomeIcon.values()) {
+            iconsPane.getChildren().add(FontAwesomeIconFactory.get().createIcon(icon, "3em"));
+        }
+        Scene scene = new Scene(new ScrollPane(iconsPane), 500, 500);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("FontAwesomeFX: FontAwesomeIcons Demo: " + FontAwesomeIcon.values().length + " Icons");
+        primaryStage.show();
 
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
