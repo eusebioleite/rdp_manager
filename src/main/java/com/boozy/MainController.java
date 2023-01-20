@@ -291,6 +291,40 @@ public class MainController {
 
     @FXML
     private void actionGo(){
+        try {
+
+            String type_description = data_table.getSelectionModel().getSelectedItem().getTypes_description();
+            String connection_info = data_table.getSelectionModel().getSelectedItem().getConnection_info();
+            String rdp_id = data_table.getSelectionModel().getSelectedItem().getId();
+            String password = Sqlite_JDBC_Connector.get_credentials_by_rdp(Integer.parseInt(rdp_id)).getPassword();
+
+            String anydesk_path = Sqlite_JDBC_Connector.get_settings_by_id(2).getValue();
+            String teamviewer_path = Sqlite_JDBC_Connector.get_settings_by_id(1).getValue();
+
+            String anydesk_command = String.format("cmd /c echo %s | cmd /c \"%s\" %s --with-password", password, anydesk_path, connection_info);
+            System.out.println(anydesk_command);
+            String teamviewer_command = String.format("cmd /c \"%s\" --id %s -p %s", teamviewer_path, connection_info, password);
+            System.out.println("type_description: " + type_description);
+            switch(type_description.trim()){
+                
+                case "AnyDesk":
+                    System.out.println("AnyDesk");
+                    Process ad = Runtime.getRuntime().exec(anydesk_command);
+                    ad.waitFor();
+                    System.out.println("after");
+                    System.out.println(ad.getOutputStream().toString());
+                    break;
+
+                case "TeamViewer":
+                    System.out.println("TeamViewer");
+                    Process tv = Runtime.getRuntime().exec(teamviewer_command);
+                    tv.waitFor();
+                    break;
+            }
+
+        } catch(Exception e) {
+
+        }
 
     }
 

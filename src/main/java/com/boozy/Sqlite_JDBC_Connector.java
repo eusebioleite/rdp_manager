@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import com.boozy.tables.Types;
 import com.boozy.tables.view.RdpView;
 import com.boozy.tables.Company;
+import com.boozy.tables.Credentials;
 import com.boozy.tables.Rdp;
+import com.boozy.tables.Settings;
 
 public class Sqlite_JDBC_Connector {
     private static String db_path = "C:\\projects\\rdp_manager\\db\\rdp_manager.db";
@@ -522,6 +524,84 @@ public class Sqlite_JDBC_Connector {
 
             /* return data */
             return types;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static Settings get_settings_by_id(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response */
+            Settings settings = null;
+
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(String.format("select * from settings where settings.id = %d", id));
+            
+            /* execute query */            
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                settings = new Settings(
+                    result_set.getInt("id"), 
+                    result_set.getString("name"),
+                    result_set.getString("value")
+                );
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return settings;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static Credentials get_credentials_by_rdp(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response */
+            Credentials credentials = null;
+
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(String.format("select * from credentials where credentials.rdp_id = %d", id));
+            
+            /* execute query */            
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                credentials = new Credentials(
+                    result_set.getInt("id"), 
+                    result_set.getString("username"),
+                    result_set.getString("password")
+                );
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return credentials;
 
         } catch (Exception e) {
 
