@@ -16,8 +16,8 @@ public class App extends Application {
 
         /* load fxml */
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main.fxml"));
-        
-        /* create scene */
+
+        /* create window */
         scene = new Scene(fxmlLoader.load(), 640, 400);
         stage.setTitle("RDP Manager");
         stage.setScene(scene);

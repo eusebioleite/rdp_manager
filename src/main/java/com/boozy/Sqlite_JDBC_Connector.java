@@ -26,7 +26,10 @@ public class Sqlite_JDBC_Connector {
             
             /* connection types */
             statement.execute("CREATE TABLE IF NOT EXISTS types (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar)");
-            
+            statement.execute("INSERT INTO types(description) values(\"TeamViewer\")");
+            statement.execute("INSERT INTO types(description) values(\"Anydesk\")");
+            statement.execute("INSERT INTO types(description) values(\"RDP\")");
+            statement.execute("INSERT INTO types(description) values(\"PuTTY\")");
             /* company */
             statement.execute("CREATE TABLE IF NOT EXISTS company (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar)");
             
@@ -35,6 +38,7 @@ public class Sqlite_JDBC_Connector {
             statement.execute("CREATE UNIQUE INDEX settings_name_IDX ON settings (name)");
             statement.execute("INSERT INTO settings(name, value) values(\"teamviewer_path\",\"\")");
             statement.execute("INSERT INTO settings(name, value) values(\"anydesk_path\",\"\")");
+            statement.execute("INSERT INTO settings(name, value) values(\"putty_path\",\"\")");
 
             statement.close();
 
@@ -66,7 +70,7 @@ public class Sqlite_JDBC_Connector {
             
             /* post into types */
             Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO types (description) VALUES ('" + String.format("'%s'", description));
+            statement.execute(String.format("INSERT INTO types(description) values (\"%s\")", description));
             
             statement.close();
             
@@ -84,7 +88,47 @@ public class Sqlite_JDBC_Connector {
             
             /* post into company */
             Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO company (description) VALUES ('" + String.format("'%s'", description));
+            statement.execute(String.format("INSERT INTO company(description) values (\"%s\")", description));
+            
+            statement.close();
+            
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+    }
+
+    public static void post_settings(String name, String value){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* post into company */
+            Statement statement = connection.createStatement();
+            statement.execute(String.format("INSERT INTO settings(name, value) values (\"%s\", \"%s\")", name, value)); 
+            
+            statement.close();
+            
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+    }
+
+    public static void post_credentials(String username, String password, Integer rdp_id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* post into company */
+            Statement statement = connection.createStatement();
+            statement.execute(
+                String.format(
+                    "INSERT INTO credentials(username, password, rdp_id) values (\"%s\", \"%s\", \"%d\")", username, password, rdp_id
+                )
+            );
             
             statement.close();
             
@@ -136,13 +180,60 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public static void put_company(String id, String description){
+    public static void put_company(Integer id, String description){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
             /* update company query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("update company set description = '%s' where company.id = '%s'", description, id));
+            statement.execute(String.format("update company set description = '%s' where company.id = %d", description, id));
+            
+            statement.close();
+            
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+    }
+
+    public static void put_settings(Integer id, String name, String value){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* update company query */
+            Statement statement = connection.createStatement();
+            statement.execute(
+                String.format(
+                    "update settings set name = \"%s\", value = \"%s\" where company.id = %d", name, value, id
+                )
+            );
+            
+            statement.close();
+            
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+    }
+
+    public static void put_credentials(Integer id, String username, String password, Integer rdp_id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* update company query */
+            Statement statement = connection.createStatement();
+            System.out.println(String.format(
+                "update credentials set username = \"%s\", password = \"%s\", rdp_id = %d where credentials.id = %d", 
+                username, password, rdp_id, id
+            ));
+            statement.execute(
+                String.format(
+                    "update credentials set username = \"%s\", password = \"%s\", rdp_id = %d where credentials.id = %d", 
+                    username, password, rdp_id, id
+                )
+            );
             
             statement.close();
             
@@ -159,7 +250,7 @@ public class Sqlite_JDBC_Connector {
             
             /* update rdp query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("delete from rdp where rdp.id = '%s'", id));
+            statement.execute(String.format("delete from rdp where rdp.id = %d", id));
             
             statement.close();
             
@@ -176,7 +267,7 @@ public class Sqlite_JDBC_Connector {
             
             /* update types query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("delete from types where types.id = '%s'", id));
+            statement.execute(String.format("delete from types where types.id = %d", id));
             
             statement.close();
             
@@ -187,13 +278,47 @@ public class Sqlite_JDBC_Connector {
         }
     }
 
-    public static void delete_company(String id){
+    public static void delete_company(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* update types query */
+            Statement statement = connection.createStatement();
+            statement.execute(String.format("delete from company where company.id = %d", id));
+            
+            statement.close();
+            
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+    }
+
+    public static void delete_settings(Integer id){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
             /* update company query */
             Statement statement = connection.createStatement();
-            statement.execute(String.format("delete from company where company.id = '%s'", id));
+            statement.execute(String.format("delete from settings where settings.id = %d", id));
+            
+            statement.close();
+            
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
+    }
+
+    public static void delete_credentials(Integer id){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* update company query */
+            Statement statement = connection.createStatement();
+            statement.execute(String.format("delete from company where company.id = %d", id));
             
             statement.close();
             
@@ -346,6 +471,85 @@ public class Sqlite_JDBC_Connector {
                     result_set.getString("description")
                     );
                 response.add(company);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Settings> get_settings(){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response body */
+            ArrayList<Settings> response = new ArrayList<Settings>();
+
+            /* create query */
+            PreparedStatement prepared_statement = connection.prepareStatement("select * from settings");
+            
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                Settings settings = new Settings(
+                    result_set.getInt("id"), 
+                    result_set.getString("name"),
+                    result_set.getString("value")
+                    );
+                response.add(settings);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Credentials> get_credentials(){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+
+            /* response body */
+            ArrayList<Credentials> response = new ArrayList<Credentials>();
+
+            /* create query */
+            PreparedStatement prepared_statement = connection.prepareStatement("select * from credentials");
+            
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign data to response body */
+                Credentials credentials = new Credentials(
+                    result_set.getInt("id"), 
+                    result_set.getString("username"),
+                    result_set.getString("password"),
+                    result_set.getInt("rdp_id")
+                    );
+                response.add(credentials);
 
             }
 
@@ -592,7 +796,8 @@ public class Sqlite_JDBC_Connector {
                 credentials = new Credentials(
                     result_set.getInt("id"), 
                     result_set.getString("username"),
-                    result_set.getString("password")
+                    result_set.getString("password"),
+                    result_set.getInt("rdp_id")
                 );
             }
 
@@ -753,6 +958,171 @@ public class Sqlite_JDBC_Connector {
                     result_set.getString("connection_info")
                 );
                 response.add(rdpview);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Types> get_types_by_string(String string){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* response body */
+            ArrayList<Types> response = new ArrayList<Types>();
+            
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement("select * from types where types.description like \"%" + string + "%\"");
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign values to response body */
+                Types types = new Types(
+                    result_set.getInt("id"), 
+                    result_set.getString("description")
+                );
+                response.add(types);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Settings> get_settings_by_string(String string){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* response body */
+            ArrayList<Settings> response = new ArrayList<Settings>();
+            
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(
+                String.format(
+                    "select * from settings where name like \"%s\" or value like \"%s\"",
+                    string, string
+                )
+            );
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign values to response body */
+                Settings settings = new Settings(
+                    result_set.getInt("id"), 
+                    result_set.getString("name"),
+                    result_set.getString("value")
+                );
+                response.add(settings);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Credentials> get_credentials_by_string(String string){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* response body */
+            ArrayList<Credentials> response = new ArrayList<Credentials>();
+            
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement(
+                String.format(
+                    "select * from credentials where username like \"%s\" or password like \"%s\"",
+                    string, string
+                )
+            );
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign values to response body */
+                Credentials credentials = new Credentials(
+                    result_set.getInt("id"), 
+                    result_set.getString("username"),
+                    result_set.getString("password"),
+                    result_set.getInt("rdp_id")
+                );
+                response.add(credentials);
+
+            }
+
+            /* close connection */
+            result_set.close();
+            prepared_statement.close();        
+
+            /* return data */
+            return response;
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public static ArrayList<Company> get_company_by_string(String string){
+
+        try(Connection connection = DriverManager.getConnection(jdbc_string)) {
+            
+            /* response body */
+            ArrayList<Company> response = new ArrayList<Company>();
+            
+            /* create query */
+            PreparedStatement prepared_statement = 
+            connection.prepareStatement("select * from company where company.description like \"%" + string + "%\"");
+            /* execute query */
+            ResultSet result_set = prepared_statement.executeQuery();
+            
+            while (result_set.next()) {
+
+                /* assign values to response body */
+                Company company = new Company(
+                    result_set.getInt("id"), 
+                    result_set.getString("description")
+                );
+                response.add(company);
 
             }
 

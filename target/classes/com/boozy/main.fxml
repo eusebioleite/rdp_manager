@@ -45,22 +45,19 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.boozy.MainController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.boozy.controllers.MainController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu fx:id="menu_options" mnemonicParsing="false" text="Options...">
           <items>
-            <MenuItem fx:id="menu_new" mnemonicParsing="false" text="New..." />
-            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menu_import" mnemonicParsing="false" text="Import" />
             <MenuItem fx:id="menu_export" mnemonicParsing="false" text="Export" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem fx:id="menu_types" mnemonicParsing="false" text="Connection Types" />
-                  <MenuItem fx:id="menu_companies" mnemonicParsing="false" text="Companies" />
-                  <MenuItem fx:id="menu_variables" mnemonicParsing="false" text="Variables" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem fx:id="menu_settings" mnemonicParsing="false" text="Settings..." />
+            <MenuItem fx:id="menu_types" onAction="#actionMenuTypes" mnemonicParsing="false" text="Connection Types" />
+                  <MenuItem fx:id="menu_companies" onAction="#actionMenuCompanies" mnemonicParsing="false" text="Companies" />
+                  <MenuItem fx:id="menu_credentials" onAction="#actionMenuCredentials" mnemonicParsing="false" text="Credentials" />
+            <MenuItem fx:id="menu_settings" onAction="#actionMenuSettings" mnemonicParsing="false" text="Settings" />
           </items>
         </Menu>
       </menus>

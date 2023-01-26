@@ -5,12 +5,14 @@ public class Credentials {
     private Integer id              = null;
     private String username      = null;
     private String password      = null;
+    private Integer rdp_id              = null;
 
-    public Credentials(Integer id, String username, String password){
+    public Credentials(Integer id, String username, String password, Integer rdp_id){
 
         this.id                 = id;
         this.username        = username;
         this.password        = password;
+        this.rdp_id        = rdp_id;
 
     }
 
@@ -54,6 +56,20 @@ public class Credentials {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return the rdp_id
+     */
+    public Integer getRdp_id() {
+        return rdp_id;
+    }
+
+    /**
+     * @param rdp_id the rdp_id to set
+     */
+    public void setRdp_id(Integer rdp_id) {
+        this.rdp_id = rdp_id;
     }
 
     
