@@ -118,8 +118,6 @@ public class CompanyController {
             );
 
         }
-
-        (new MainController()).reloadCombos();
         
     }
     
@@ -176,8 +174,6 @@ public class CompanyController {
             );
 
         }
-        
-        (new MainController()).reloadCombos();
 
     }
 

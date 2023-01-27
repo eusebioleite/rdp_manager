@@ -118,8 +118,6 @@ public class TypesController {
             );
 
         }
-
-        (new MainController()).reloadCombos();
         
     }
     
@@ -176,8 +174,6 @@ public class TypesController {
             );
 
         }
-
-        (new MainController()).reloadCombos();
 
     }
 

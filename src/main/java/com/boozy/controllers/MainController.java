@@ -440,13 +440,13 @@ public class MainController {
             String putty_path = AppSettings.get_settings_by_id(3).getValue();
             System.getProperty("user.home");
             /* build the command */
-            String anydesk_command = String.format("echo %s | \"%s\" %s --with-password", password, anydesk_path, connection_info);
+            String anydesk_command = String.format(" echo %s | \"%s\" %s --with-password", password, anydesk_path, connection_info);
             String teamviewer_command = String.format(" %s --id %s -p %s", teamviewer_path, connection_info, password);
             String rdp_command = String.format(" mstsc /f /v:\"%s\" /Prompt", connection_info);
             String putty_command = 
             (password.contains(":")) ? 
-            String.format("%s -ssh %s@%s -i %s", putty_path, username, connection_info, password) :
-            String.format("%s -ssh %s@%s -pw %s", putty_path, username, connection_info, password) ;
+            String.format(" %s -ssh %s@%s -i %s", putty_path, username, connection_info, password) :
+            String.format(" %s -ssh %s@%s -pw %s", putty_path, username, connection_info, password) ;
             
             /* execute command */
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -458,12 +458,15 @@ public class MainController {
                     break;
 
                 case "TeamViewer":
+                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), teamviewer_command);
                     break;
 
                 case "RDP":
+                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), rdp_command);
                     break;
 
                 case "PuTTY":
+                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), putty_command);
                     break;
             }
 
@@ -537,36 +540,6 @@ public class MainController {
             );
 
         }
-    }
-    
-    public void reloadCombos(){
-
-        /* load types combo box and column */
-        ArrayList<Types> types = AppSettings.get_types();
-        ObservableList<String> types_description = FXCollections.observableArrayList();
-
-        for(Types types_row : types){
-
-            types_description.add(types_row.getDescription());
-
-        }
-        
-        type_column.setCellValueFactory(new PropertyValueFactory<>("Types_description"));
-        type_column.setCellFactory(ComboBoxTableCell.<RdpView, String>forTableColumn(types_description));
-
-        /* load company combo box and column */
-        ArrayList<Company> company = AppSettings.get_company();
-        ObservableList<String> company_description = FXCollections.observableArrayList();
-        
-        for(Company company_row : company){
-
-            company_description.add(company_row.getDescription());
-
-        }
-        
-        company_column.setCellValueFactory(new PropertyValueFactory<>("Company_description"));
-        company_column.setCellFactory(ComboBoxTableCell.<RdpView, String>forTableColumn(company_description));
-
     }
     
     private void loadTable(){

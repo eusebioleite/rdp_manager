@@ -28,6 +28,7 @@ public class App extends Application {
 
     public static void main(String[] args) {
         
+        AppSettings.create_db();
         launch();
         
     }
