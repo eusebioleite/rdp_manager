@@ -2,7 +2,7 @@ package com.boozy.controllers;
 
 import java.util.ArrayList;
 
-import com.boozy.Sqlite_JDBC_Connector;
+import com.boozy.AppSettings;
 import com.boozy.tables.Settings;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -62,7 +62,7 @@ public class SettingsController {
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
-                ArrayList<Settings> settings = Sqlite_JDBC_Connector.get_settings_by_string(object.getValue());
+                ArrayList<Settings> settings = AppSettings.get_settings_by_string(object.getValue());
 
                 for(Settings settings_row : settings){
 
@@ -81,7 +81,7 @@ public class SettingsController {
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
-                ArrayList<Settings> settings = Sqlite_JDBC_Connector.get_settings_by_string(object.getValue());
+                ArrayList<Settings> settings = AppSettings.get_settings_by_string(object.getValue());
 
                 for(Settings settings_row : settings){
 
@@ -105,13 +105,13 @@ public class SettingsController {
     private void actionAdd(){
         
         /* Insert empty row */
-        Sqlite_JDBC_Connector.post_settings("name...", "value...");
+        AppSettings.post_settings("name...", "value...");
         
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Settings> settings = Sqlite_JDBC_Connector.get_settings();
+        ArrayList<Settings> settings = AppSettings.get_settings();
 
         for(Settings settings_row : settings){
 
@@ -129,13 +129,13 @@ public class SettingsController {
     @FXML
     private void actionDel(){
 
-        Sqlite_JDBC_Connector.delete_settings(data_table.getSelectionModel().getSelectedItem().getId());
+        AppSettings.delete_settings(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Settings> settings = Sqlite_JDBC_Connector.get_settings();
+        ArrayList<Settings> settings = AppSettings.get_settings();
 
         for(Settings settings_row : settings){
 
@@ -157,7 +157,7 @@ public class SettingsController {
         switch(event.getTableColumn().idProperty().getValue().toString()){
 
             case "name_column":
-                Sqlite_JDBC_Connector.put_settings(
+                AppSettings.put_settings(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     event.getNewValue().toString(),
                     data_table.getSelectionModel().getSelectedItem().getValue()
@@ -166,7 +166,7 @@ public class SettingsController {
                 break;
 
             case "value_column":
-                Sqlite_JDBC_Connector.put_settings(
+                AppSettings.put_settings(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getName(),
                     event.getNewValue().toString()
@@ -177,7 +177,7 @@ public class SettingsController {
         }
 
         /* read data from db and insert into tableview */
-        ArrayList<Settings> Settings = Sqlite_JDBC_Connector.get_settings();
+        ArrayList<Settings> Settings = AppSettings.get_settings();
 
         data_table.getItems().clear();
         for(Settings settings_row : Settings){
@@ -210,7 +210,7 @@ public class SettingsController {
         value_column.setCellFactory(TextFieldTableCell.<Settings>forTableColumn());
 
         /* read data from db and insert into tableview */
-        ArrayList<Settings> Settings = Sqlite_JDBC_Connector.get_settings();
+        ArrayList<Settings> Settings = AppSettings.get_settings();
 
         for(Settings settings_row : Settings){
 

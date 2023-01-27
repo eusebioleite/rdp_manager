@@ -2,7 +2,7 @@ package com.boozy.controllers;
 
 import java.util.ArrayList;
 
-import com.boozy.Sqlite_JDBC_Connector;
+import com.boozy.AppSettings;
 import com.boozy.tables.Types;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -59,7 +59,7 @@ public class TypesController {
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
-                ArrayList<Types> types = Sqlite_JDBC_Connector.get_types_by_string(object.getValue());
+                ArrayList<Types> types = AppSettings.get_types_by_string(object.getValue());
 
                 for(Types types_row : types){
 
@@ -77,7 +77,7 @@ public class TypesController {
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
-                ArrayList<Types> types = Sqlite_JDBC_Connector.get_types_by_string(object.getValue());
+                ArrayList<Types> types = AppSettings.get_types_by_string(object.getValue());
 
                 for(Types types_row : types){
 
@@ -100,13 +100,13 @@ public class TypesController {
     private void actionAdd(){
         
         /* Insert empty row */
-        Sqlite_JDBC_Connector.post_types("your description...");
+        AppSettings.post_types("your description...");
         
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Types> types = Sqlite_JDBC_Connector.get_types();
+        ArrayList<Types> types = AppSettings.get_types();
 
         for(Types types_row : types){
 
@@ -126,13 +126,13 @@ public class TypesController {
     @FXML
     private void actionDel(){
 
-        Sqlite_JDBC_Connector.delete_types(data_table.getSelectionModel().getSelectedItem().getId());
+        AppSettings.delete_types(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Types> types = Sqlite_JDBC_Connector.get_types();
+        ArrayList<Types> types = AppSettings.get_types();
 
         for(Types types_row : types){
 
@@ -153,7 +153,7 @@ public class TypesController {
         switch(event.getTableColumn().idProperty().getValue().toString()){
 
             case "description_column":
-                Sqlite_JDBC_Connector.put_types(
+                AppSettings.put_types(
                     data_table.getSelectionModel().getSelectedItem().getId().toString(), 
                     event.getNewValue().toString()
                 );
@@ -163,7 +163,7 @@ public class TypesController {
         }
 
         /* read data from db and insert into tableview */
-        ArrayList<Types> Types = Sqlite_JDBC_Connector.get_types();
+        ArrayList<Types> Types = AppSettings.get_types();
 
         data_table.getItems().clear();
         for(Types types_row : Types){
@@ -193,7 +193,7 @@ public class TypesController {
         description_column.setCellFactory(TextFieldTableCell.<Types>forTableColumn());
 
         /* read data from db and insert into tableview */
-        ArrayList<Types> Types = Sqlite_JDBC_Connector.get_types();
+        ArrayList<Types> Types = AppSettings.get_types();
 
         for(Types types_row : Types){
 

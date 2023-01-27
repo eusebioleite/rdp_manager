@@ -11,7 +11,7 @@ import com.boozy.tables.Credentials;
 import com.boozy.tables.Rdp;
 import com.boozy.tables.Settings;
 
-public class Sqlite_JDBC_Connector {
+public class AppSettings {
 
     private static String jdbc_string = 
         String.format(
@@ -28,8 +28,8 @@ public class Sqlite_JDBC_Connector {
             
             /* create tables if not exist */
             Statement statement = connection.createStatement();
-            PreparedStatement prepared_statement;
-            ResultSet result_set;
+            PreparedStatement prepared_statement = null;
+            ResultSet result_set = null;
 
             /* rdp */
             statement.execute("CREATE TABLE IF NOT EXISTS rdp (id INTEGER PRIMARY KEY AUTOINCREMENT, description varchar, types_id INTEGER, company_id INTEGER,	connection_info varchar, CONSTRAINT rdp_FK_1 FOREIGN KEY (types_id) REFERENCES types(id), CONSTRAINT rdp_FK_2 FOREIGN KEY (company_id) REFERENCES company(id))");
@@ -61,6 +61,8 @@ public class Sqlite_JDBC_Connector {
             }
             
             /* settings */
+            prepared_statement = null;
+            result_set = null;
             prepared_statement = connection.prepareStatement("select * from settings");
             result_set = prepared_statement.executeQuery();
             if (!result_set.next()){

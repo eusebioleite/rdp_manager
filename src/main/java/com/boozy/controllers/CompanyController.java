@@ -2,7 +2,7 @@ package com.boozy.controllers;
 
 import java.util.ArrayList;
 
-import com.boozy.Sqlite_JDBC_Connector;
+import com.boozy.AppSettings;
 import com.boozy.tables.Company;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -59,7 +59,7 @@ public class CompanyController {
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
-                ArrayList<Company> company = Sqlite_JDBC_Connector.get_company_by_string(object.getValue());
+                ArrayList<Company> company = AppSettings.get_company_by_string(object.getValue());
 
                 for(Company company_row : company){
 
@@ -77,7 +77,7 @@ public class CompanyController {
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
-                ArrayList<Company> company = Sqlite_JDBC_Connector.get_company_by_string(object.getValue());
+                ArrayList<Company> company = AppSettings.get_company_by_string(object.getValue());
 
                 for(Company company_row : company){
 
@@ -100,13 +100,13 @@ public class CompanyController {
     private void actionAdd(){
         
         /* Insert empty row */
-        Sqlite_JDBC_Connector.post_company("your description...");
+        AppSettings.post_company("your description...");
         
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();
+        ArrayList<Company> company = AppSettings.get_company();
 
         for(Company company_row : company){
 
@@ -126,13 +126,13 @@ public class CompanyController {
     @FXML
     private void actionDel(){
 
-        Sqlite_JDBC_Connector.delete_company(data_table.getSelectionModel().getSelectedItem().getId());
+        AppSettings.delete_company(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();
+        ArrayList<Company> company = AppSettings.get_company();
 
         for(Company company_row : company){
 
@@ -153,7 +153,7 @@ public class CompanyController {
         switch(event.getTableColumn().idProperty().getValue().toString()){
 
             case "description_column":
-                Sqlite_JDBC_Connector.put_company(
+                AppSettings.put_company(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     event.getNewValue().toString()
                 );
@@ -163,7 +163,7 @@ public class CompanyController {
         }
 
         /* read data from db and insert into tableview */
-        ArrayList<Company> Company = Sqlite_JDBC_Connector.get_company();
+        ArrayList<Company> Company = AppSettings.get_company();
 
         data_table.getItems().clear();
         for(Company company_row : Company){
@@ -193,7 +193,7 @@ public class CompanyController {
         description_column.setCellFactory(TextFieldTableCell.<Company>forTableColumn());
 
         /* read data from db and insert into tableview */
-        ArrayList<Company> Company = Sqlite_JDBC_Connector.get_company();
+        ArrayList<Company> Company = AppSettings.get_company();
 
         for(Company company_row : Company){
 

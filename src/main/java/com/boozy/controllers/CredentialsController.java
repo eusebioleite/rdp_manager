@@ -2,7 +2,7 @@ package com.boozy.controllers;
 
 import java.util.ArrayList;
 
-import com.boozy.Sqlite_JDBC_Connector;
+import com.boozy.AppSettings;
 import com.boozy.tables.Credentials;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -65,7 +65,7 @@ public class CredentialsController {
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
-                ArrayList<Credentials> credentials = Sqlite_JDBC_Connector.get_credentials_by_string(object.getValue());
+                ArrayList<Credentials> credentials = AppSettings.get_credentials_by_string(object.getValue());
 
                 for(Credentials credentials_row : credentials){
 
@@ -85,7 +85,7 @@ public class CredentialsController {
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
-                ArrayList<Credentials> credentials = Sqlite_JDBC_Connector.get_credentials_by_string(object.getValue());
+                ArrayList<Credentials> credentials = AppSettings.get_credentials_by_string(object.getValue());
 
                 for(Credentials credentials_row : credentials){
 
@@ -110,13 +110,13 @@ public class CredentialsController {
     private void actionAdd(){
         
         /* Insert empty row */
-        Sqlite_JDBC_Connector.post_credentials("username...", "password...", 0);
+        AppSettings.post_credentials("username...", "password...", 0);
         
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Credentials> credentials = Sqlite_JDBC_Connector.get_credentials();
+        ArrayList<Credentials> credentials = AppSettings.get_credentials();
 
         for(Credentials credentials_row : credentials){
 
@@ -135,13 +135,13 @@ public class CredentialsController {
     @FXML
     private void actionDel(){
 
-        Sqlite_JDBC_Connector.delete_credentials(data_table.getSelectionModel().getSelectedItem().getId());
+        AppSettings.delete_credentials(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<Credentials> credentials = Sqlite_JDBC_Connector.get_credentials();
+        ArrayList<Credentials> credentials = AppSettings.get_credentials();
 
         for(Credentials credentials_row : credentials){
 
@@ -164,7 +164,7 @@ public class CredentialsController {
         switch(event.getTableColumn().idProperty().getValue().toString()){
 
             case "username_column":
-                Sqlite_JDBC_Connector.put_credentials(
+                AppSettings.put_credentials(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     event.getNewValue().toString(),
                     data_table.getSelectionModel().getSelectedItem().getPassword(),
@@ -174,7 +174,7 @@ public class CredentialsController {
                 break;
 
             case "password_column":
-                Sqlite_JDBC_Connector.put_credentials(
+                AppSettings.put_credentials(
                     data_table.getSelectionModel().getSelectedItem().getId(),
                     data_table.getSelectionModel().getSelectedItem().getUsername(), 
                     event.getNewValue().toString(),
@@ -184,7 +184,7 @@ public class CredentialsController {
                 break;
 
             case "rdp_column":
-                Sqlite_JDBC_Connector.put_credentials(
+                AppSettings.put_credentials(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getUsername(),
                     data_table.getSelectionModel().getSelectedItem().getPassword(),
@@ -196,7 +196,7 @@ public class CredentialsController {
         }
 
         /* read data from db and insert into tableview */
-        ArrayList<Credentials> Credentials = Sqlite_JDBC_Connector.get_credentials();
+        ArrayList<Credentials> Credentials = AppSettings.get_credentials();
 
         data_table.getItems().clear();
         for(Credentials credentials_row : Credentials){
@@ -232,7 +232,7 @@ public class CredentialsController {
         rdp_column.setCellFactory(TextFieldTableCell.<Credentials, Integer>forTableColumn(new IntegerStringConverter()));
 
         /* read data from db and insert into tableview */
-        ArrayList<Credentials> Credentials = Sqlite_JDBC_Connector.get_credentials();
+        ArrayList<Credentials> Credentials = AppSettings.get_credentials();
 
         for(Credentials credentials_row : Credentials){
 

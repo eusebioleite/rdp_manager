@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 import com.boozy.App;
-import com.boozy.Sqlite_JDBC_Connector;
+import com.boozy.AppSettings;
 import com.boozy.tables.*;
 import com.boozy.tables.view.*;
 
@@ -97,7 +97,7 @@ public class MainController {
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
-                ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string(object.getValue());
+                ArrayList<RdpView> rdpview = AppSettings.get_rdpview_by_string(object.getValue());
 
                 for(RdpView rdpview_row : rdpview){
 
@@ -119,7 +119,7 @@ public class MainController {
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
-                ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview_by_string(object.getValue());
+                ArrayList<RdpView> rdpview = AppSettings.get_rdpview_by_string(object.getValue());
 
                 for(RdpView rdpview_row : rdpview){
 
@@ -149,7 +149,7 @@ public class MainController {
         filter_type.getItems().add("None");
 
         /* load filter_data with data from company table, since it's the first option */
-        ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();   
+        ArrayList<Company> company = AppSettings.get_company();   
 
         for (Company company_row : company) {
         
@@ -169,7 +169,7 @@ public class MainController {
         if (filter_type.getValue().equals("Company")){
 
             /* load filter_data combobox with data from company table */
-            ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();   
+            ArrayList<Company> company = AppSettings.get_company();   
 
             for (Company company_row : company) {
             
@@ -180,7 +180,7 @@ public class MainController {
         } else {
             
             /* load filter_data combobox with data from types table */
-            ArrayList<Types> types = Sqlite_JDBC_Connector.get_types();   
+            ArrayList<Types> types = AppSettings.get_types();   
 
             for (Types types_row : types) {
             
@@ -199,8 +199,8 @@ public class MainController {
 
             /* read data from db and insert into tableview */
             ArrayList<RdpView> rdpview = 
-            Sqlite_JDBC_Connector.get_rdpview_by_type(
-                Sqlite_JDBC_Connector.get_types_by_description(filter_data.getSelectionModel().getSelectedItem().toString()).getId().toString());
+            AppSettings.get_rdpview_by_type(
+                AppSettings.get_types_by_description(filter_data.getSelectionModel().getSelectedItem().toString()).getId().toString());
 
             data_table.getItems().clear();
             for(RdpView rdpview_row : rdpview){
@@ -221,8 +221,8 @@ public class MainController {
 
             /* read data from db and insert into tableview */
             ArrayList<RdpView> rdpview = 
-            Sqlite_JDBC_Connector.get_rdpview_by_company(
-                Sqlite_JDBC_Connector.get_company_by_description(filter_data.getSelectionModel().getSelectedItem().toString()).getId().toString()
+            AppSettings.get_rdpview_by_company(
+                AppSettings.get_company_by_description(filter_data.getSelectionModel().getSelectedItem().toString()).getId().toString()
             );
 
             data_table.getItems().clear();
@@ -242,7 +242,7 @@ public class MainController {
         } else {
 
             /* read data from db and insert into tableview */
-            ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+            ArrayList<RdpView> rdpview = AppSettings.get_rdpview();
 
             for(RdpView rdpview_row : rdpview){
 
@@ -371,13 +371,13 @@ public class MainController {
     private void actionAdd(){
         
         /* Insert empty row */
-        Sqlite_JDBC_Connector.post_rdp("your description...", "1", "1", "0.0.0.0");
+        AppSettings.post_rdp("your description...", "1", "1", "0.0.0.0");
         
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+        ArrayList<RdpView> rdpview = AppSettings.get_rdpview();
 
         for(RdpView rdpview_row : rdpview){
 
@@ -398,13 +398,13 @@ public class MainController {
     private void actionDel(){
 
         /* delete record */
-        Sqlite_JDBC_Connector.delete_rdp(data_table.getSelectionModel().getSelectedItem().getId());
+        AppSettings.delete_rdp(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
         data_table.getItems().clear();
 
         /* read data from db and insert into tableview */
-        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+        ArrayList<RdpView> rdpview = AppSettings.get_rdpview();
 
         for(RdpView rdpview_row : rdpview){
 
@@ -431,13 +431,13 @@ public class MainController {
             String type_description = data_table.getSelectionModel().getSelectedItem().getTypes_description();
             String connection_info = data_table.getSelectionModel().getSelectedItem().getConnection_info();
             String rdp_id = data_table.getSelectionModel().getSelectedItem().getId();
-            String username = Sqlite_JDBC_Connector.get_credentials_by_rdp(Integer.parseInt(rdp_id)).getUsername();
-            String password = Sqlite_JDBC_Connector.get_credentials_by_rdp(Integer.parseInt(rdp_id)).getPassword();
+            String username = AppSettings.get_credentials_by_rdp(Integer.parseInt(rdp_id)).getUsername();
+            String password = AppSettings.get_credentials_by_rdp(Integer.parseInt(rdp_id)).getPassword();
 
             /* retrieve exe paths */
-            String anydesk_path = Sqlite_JDBC_Connector.get_settings_by_id(2).getValue();
-            String teamviewer_path = Sqlite_JDBC_Connector.get_settings_by_id(1).getValue();
-            String putty_path = Sqlite_JDBC_Connector.get_settings_by_id(3).getValue();
+            String anydesk_path = AppSettings.get_settings_by_id(2).getValue();
+            String teamviewer_path = AppSettings.get_settings_by_id(1).getValue();
+            String putty_path = AppSettings.get_settings_by_id(3).getValue();
             System.getProperty("user.home");
             /* build the command */
             String anydesk_command = String.format("echo %s | \"%s\" %s --with-password", password, anydesk_path, connection_info);
@@ -479,41 +479,41 @@ public class MainController {
         switch(event.getTableColumn().idProperty().getValue().toString()){
 
             case "description_column":
-                Sqlite_JDBC_Connector.put_rdp(
+                AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     event.getNewValue().toString(), 
-                    Sqlite_JDBC_Connector.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
-                    Sqlite_JDBC_Connector.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
+                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
                     data_table.getSelectionModel().getSelectedItem().getConnection_info()
                 );
                 break;
             
             case "type_column":
-                Sqlite_JDBC_Connector.put_rdp(
+                AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getDescription(), 
-                    Sqlite_JDBC_Connector.get_types_by_description(event.getNewValue().toString()).getId().toString(), 
-                    Sqlite_JDBC_Connector.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    AppSettings.get_types_by_description(event.getNewValue().toString()).getId().toString(), 
+                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
                     data_table.getSelectionModel().getSelectedItem().getConnection_info()
                 );
                 break;
             
             case "company_column":
-                Sqlite_JDBC_Connector.put_rdp(
+                AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getDescription(), 
-                    Sqlite_JDBC_Connector.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
-                    Sqlite_JDBC_Connector.get_company_by_description(event.getNewValue().toString()).getId().toString(), 
+                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
+                    AppSettings.get_company_by_description(event.getNewValue().toString()).getId().toString(), 
                     data_table.getSelectionModel().getSelectedItem().getConnection_info()
                 );
                 break;
             
             case "connectioninfo_column":
-                Sqlite_JDBC_Connector.put_rdp(
+                AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getDescription(), 
-                    Sqlite_JDBC_Connector.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
-                    Sqlite_JDBC_Connector.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
+                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
                     event.getNewValue().toString()
                 );
                 break;
@@ -521,7 +521,7 @@ public class MainController {
         }
 
         /* read data from db and insert into tableview */
-        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+        ArrayList<RdpView> rdpview = AppSettings.get_rdpview();
 
         data_table.getItems().clear();
         for(RdpView rdpview_row : rdpview){
@@ -542,7 +542,7 @@ public class MainController {
     public void reloadCombos(){
 
         /* load types combo box and column */
-        ArrayList<Types> types = Sqlite_JDBC_Connector.get_types();
+        ArrayList<Types> types = AppSettings.get_types();
         ObservableList<String> types_description = FXCollections.observableArrayList();
 
         for(Types types_row : types){
@@ -555,7 +555,7 @@ public class MainController {
         type_column.setCellFactory(ComboBoxTableCell.<RdpView, String>forTableColumn(types_description));
 
         /* load company combo box and column */
-        ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();
+        ArrayList<Company> company = AppSettings.get_company();
         ObservableList<String> company_description = FXCollections.observableArrayList();
         
         for(Company company_row : company){
@@ -580,7 +580,7 @@ public class MainController {
         description_column.setCellFactory(TextFieldTableCell.<RdpView>forTableColumn());
 
         /* load types combo box and column */
-        ArrayList<Types> types = Sqlite_JDBC_Connector.get_types();
+        ArrayList<Types> types = AppSettings.get_types();
         ObservableList<String> types_description = FXCollections.observableArrayList();
 
         for(Types types_row : types){
@@ -593,7 +593,7 @@ public class MainController {
         type_column.setCellFactory(ComboBoxTableCell.<RdpView, String>forTableColumn(types_description));
 
         /* load company combo box and column */
-        ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();
+        ArrayList<Company> company = AppSettings.get_company();
         ObservableList<String> company_description = FXCollections.observableArrayList();
         
         for(Company company_row : company){
@@ -610,7 +610,7 @@ public class MainController {
         connectioninfo_column.setCellFactory(TextFieldTableCell.<RdpView>forTableColumn());
 
         /* read data from db and insert into tableview */
-        ArrayList<RdpView> rdpview = Sqlite_JDBC_Connector.get_rdpview();
+        ArrayList<RdpView> rdpview = AppSettings.get_rdpview();
 
         for(RdpView rdpview_row : rdpview){
 
