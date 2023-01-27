@@ -8,7 +8,8 @@
         "size": "100% 1024px",
         "position": "center",
         "interval": 0
-    }
+    },
+    "java.debug.settings.onBuildFailureProceed": true
     // pyramids https://media1.giphy.com/media/G6raWyL1yF2UQBaJAc/giphy.gif?cid=790b76113608b186f8876de98cfac8133528ab225ca18b53&rid=giphy.gif&ct=g
     // cool car https://media2.giphy.com/media/6oCZKu0kFQyFM4eO59/giphy.gif?cid=790b76112a5113c3c36a42a6d142b958d93a39b0968002b8&rid=giphy.gif&ct=g
 }

@@ -126,7 +126,7 @@ public class TypesController {
     @FXML
     private void actionDel(){
 
-        Sqlite_JDBC_Connector.delete_types(data_table.getSelectionModel().getSelectedItem().getId().toString());
+        Sqlite_JDBC_Connector.delete_types(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
         data_table.getItems().clear();

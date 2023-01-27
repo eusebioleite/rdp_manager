@@ -93,6 +93,7 @@ public class MainController {
         search_bar.textProperty().addListener((object, oldValue, newValue) -> {
             if (newValue.length() > oldValue.length()) {
                 
+                /* clear table */
                 data_table.getItems().clear();
                 
                 /* read data from db and insert into tableview */
@@ -114,6 +115,7 @@ public class MainController {
 
             } else {
 
+                /* clear table */
                 data_table.getItems().clear();
 
                 /* read data from db and insert into tableview */
@@ -145,6 +147,7 @@ public class MainController {
         filter_type.getItems().add("Company");
         filter_type.getItems().add("Connection Type");
         filter_type.getItems().add("None");
+
         /* load filter_data with data from company table, since it's the first option */
         ArrayList<Company> company = Sqlite_JDBC_Connector.get_company();   
 
@@ -191,6 +194,7 @@ public class MainController {
     
     @FXML
     public void actionFilterData(ActionEvent e){
+        /* filter the combobox filter_data depending on filter_type */
         if (filter_type.getSelectionModel().getSelectedItem().toString() == "Connection Type"){
 
             /* read data from db and insert into tableview */
@@ -212,6 +216,7 @@ public class MainController {
                 );
 
             }
+
         } else if(filter_type.getSelectionModel().getSelectedItem().toString() == "Company") {
 
             /* read data from db and insert into tableview */
@@ -274,6 +279,7 @@ public class MainController {
             stage.show();
 
         } catch (Exception e) {
+
             System.out.println("error:");
             System.out.println(e.getMessage());
 
@@ -290,9 +296,8 @@ public class MainController {
             /* load fxml */
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("companies.fxml"));
 
-            /* create scene */
+            /* create window */
             Scene scene = new Scene(fxmlLoader.load(), 640, 400);
-
             Stage stage = new Stage();
             stage.setTitle("Companies");
             stage.setResizable(false);
@@ -300,6 +305,7 @@ public class MainController {
             stage.show();
 
         } catch (Exception e) {
+
             System.out.println("error:");
             System.out.println(e.getMessage());
 
@@ -316,9 +322,8 @@ public class MainController {
             /* load fxml */
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("credentials.fxml"));
 
-            /* create scene */
+            /* create window */
             Scene scene = new Scene(fxmlLoader.load(), 640, 400);
-
             Stage stage = new Stage();
             stage.setTitle("Credentials");
             stage.setResizable(false);
@@ -326,6 +331,7 @@ public class MainController {
             stage.show();
 
         } catch (Exception e) {
+
             System.out.println("error:");
             System.out.println(e.getMessage());
 
@@ -344,7 +350,6 @@ public class MainController {
 
             /* create scene */
             Scene scene = new Scene(fxmlLoader.load(), 640, 400);
-
             Stage stage = new Stage();
             stage.setTitle("Settings");
             stage.setResizable(false);
@@ -352,6 +357,7 @@ public class MainController {
             stage.show();
 
         } catch (Exception e) {
+
             System.out.println("error:");
             System.out.println(e.getMessage());
 
@@ -359,6 +365,7 @@ public class MainController {
         }
 
     }
+
     /* CRUD */
     @FXML
     private void actionAdd(){
@@ -390,6 +397,7 @@ public class MainController {
     @FXML
     private void actionDel(){
 
+        /* delete record */
         Sqlite_JDBC_Connector.delete_rdp(data_table.getSelectionModel().getSelectedItem().getId());
 
         /* clear data_table */
@@ -416,6 +424,7 @@ public class MainController {
 
     @FXML
     private void actionGo(){
+
         try {
 
             /* retrieve necessary data */
@@ -429,36 +438,32 @@ public class MainController {
             String anydesk_path = Sqlite_JDBC_Connector.get_settings_by_id(2).getValue();
             String teamviewer_path = Sqlite_JDBC_Connector.get_settings_by_id(1).getValue();
             String putty_path = Sqlite_JDBC_Connector.get_settings_by_id(3).getValue();
-
+            System.getProperty("user.home");
             /* build the command */
-            String anydesk_command = String.format("cmd /c echo %s | cmd /c \"%s\" %s --with-password", password, anydesk_path, connection_info);
-            String teamviewer_command = String.format("cmd /c %s --id %s -p %s", teamviewer_path, connection_info, password);
-            String rdp_command = String.format("cmd /c mstsc /f /v:\"%s\" /Prompt", connection_info);
+            String anydesk_command = String.format("echo %s | \"%s\" %s --with-password", password, anydesk_path, connection_info);
+            String teamviewer_command = String.format(" %s --id %s -p %s", teamviewer_path, connection_info, password);
+            String rdp_command = String.format(" mstsc /f /v:\"%s\" /Prompt", connection_info);
             String putty_command = 
             (password.contains(":")) ? 
-            String.format("cmd /c %s -ssh %s@%s -i %s", putty_path, username, connection_info, password) :
-            String.format("cmd /c %s -ssh %s@%s -pw %s", putty_path, username, connection_info, password) ;
+            String.format("%s -ssh %s@%s -i %s", putty_path, username, connection_info, password) :
+            String.format("%s -ssh %s@%s -pw %s", putty_path, username, connection_info, password) ;
             
+            /* execute command */
+            ProcessBuilder processBuilder = new ProcessBuilder();
+
             switch(type_description.trim()){
                 
                 case "AnyDesk":
-                    Process ad = Runtime.getRuntime().exec(anydesk_command);
-                    ad.waitFor();
+                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), anydesk_command);
                     break;
 
                 case "TeamViewer":
-                    Process tv = Runtime.getRuntime().exec(teamviewer_command);
-                    tv.waitFor();
                     break;
 
                 case "RDP":
-                    Process rdp = Runtime.getRuntime().exec(rdp_command);
-                    rdp.waitFor();
                     break;
 
                 case "PuTTY":
-                    Process tty = Runtime.getRuntime().exec(putty_command);
-                    tty.waitFor();
                     break;
             }
 
