@@ -19,6 +19,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import com.boozy.App;
@@ -371,7 +375,7 @@ public class MainController {
     private void actionAdd(){
         
         /* Insert empty row */
-        AppSettings.post_rdp("your description...", "1", "1", "0.0.0.0");
+        AppSettings.post_rdp("your description...", 1, 1, "0.0.0.0");
         
         /* clear data_table */
         data_table.getItems().clear();
@@ -425,8 +429,6 @@ public class MainController {
     @FXML
     private void actionGo(){
 
-        try {
-
             /* retrieve necessary data */
             String type_description = data_table.getSelectionModel().getSelectedItem().getTypes_description();
             String connection_info = data_table.getSelectionModel().getSelectedItem().getConnection_info();
@@ -438,41 +440,87 @@ public class MainController {
             String anydesk_path = AppSettings.get_settings_by_id(2).getValue();
             String teamviewer_path = AppSettings.get_settings_by_id(1).getValue();
             String putty_path = AppSettings.get_settings_by_id(3).getValue();
-            System.getProperty("user.home");
+            
             /* build the command */
-            String anydesk_command = String.format(" echo %s | \"%s\" %s --with-password", password, anydesk_path, connection_info);
-            String teamviewer_command = String.format(" %s --id %s -p %s", teamviewer_path, connection_info, password);
-            String rdp_command = String.format(" mstsc /f /v:\"%s\" /Prompt", connection_info);
+            String anydesk_command = String.format("cmd /c echo %s | anydesk_path %s --with-password", password, connection_info);
+            String teamviewer_command = String.format("cmd /c teamviewer_path --id %s -p %s", connection_info, password);
+            String rdp_command = String.format("cmd /c  mstsc /f /v:\"%s\" /Prompt", connection_info);
             String putty_command = 
             (password.contains(":")) ? 
-            String.format(" %s -ssh %s@%s -i %s", putty_path, username, connection_info, password) :
-            String.format(" %s -ssh %s@%s -pw %s", putty_path, username, connection_info, password) ;
-            
-            /* execute command */
-            ProcessBuilder processBuilder = new ProcessBuilder();
+            String.format("cmd /c putty_path -ssh %s@%s -i %s", username, connection_info, password) :
+            String.format("cmd /c putty_path -ssh %s@%s -pw %s", username, connection_info, password) ;
 
             switch(type_description.trim()){
                 
                 case "AnyDesk":
-                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), anydesk_command);
+                    runCommand(anydesk_command, "anydesk_path", anydesk_path);
                     break;
 
                 case "TeamViewer":
-                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), teamviewer_command);
+                    runCommand(teamviewer_command, "teamviewer_path", teamviewer_path);
                     break;
 
                 case "RDP":
-                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), rdp_command);
+                    runCommand(rdp_command, "", "");
                     break;
 
                 case "PuTTY":
-                    processBuilder.command("cmd /c ", "dir " + System.getProperty("user.home"), putty_command);
+                    runCommand(putty_command, "putty_path", putty_path);
                     break;
             }
+    }
 
-        } catch(Exception e) {
+    public void runCommand(String command, String identifier, String path){
 
-        }
+        try{
+
+            /* execute command */
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(new File(System.getProperty("user.home")));
+
+            String[] commands = command.split(" ");
+            for (int i = 0; i < commands.length; i++) {
+
+                if(commands[i].equals(identifier)) commands[i] = path;
+
+            }
+
+            processBuilder.command(commands);
+            Process process = processBuilder.start();
+
+            /* display output */
+            StringBuilder output_input = new StringBuilder();
+            BufferedReader reader_input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader_input.readLine()) != null) {
+
+                output_input.append(line + "\n");
+
+            }
+            System.out.println(output_input);
+            
+            /* display error */
+            StringBuilder output_error = new StringBuilder();
+            BufferedReader reader_error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String line_error;
+            while ((line_error = reader_error.readLine()) != null) {
+
+                output_error.append(line_error + "\n");
+
+            }
+            System.out.println(output_error);
+
+            process.waitFor();
+
+            } catch (IOException e) {
+
+                System.out.println(e.getMessage());
+
+            } catch (InterruptedException e) {
+
+                System.out.println(e.getMessage());
+
+            }
 
     }
 
@@ -485,8 +533,8 @@ public class MainController {
                 AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     event.getNewValue().toString(), 
-                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
-                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId(), 
+                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId(), 
                     data_table.getSelectionModel().getSelectedItem().getConnection_info()
                 );
                 break;
@@ -495,8 +543,8 @@ public class MainController {
                 AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getDescription(), 
-                    AppSettings.get_types_by_description(event.getNewValue().toString()).getId().toString(), 
-                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    AppSettings.get_types_by_description(event.getNewValue().toString()).getId(), 
+                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId(), 
                     data_table.getSelectionModel().getSelectedItem().getConnection_info()
                 );
                 break;
@@ -505,8 +553,8 @@ public class MainController {
                 AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getDescription(), 
-                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
-                    AppSettings.get_company_by_description(event.getNewValue().toString()).getId().toString(), 
+                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId(), 
+                    AppSettings.get_company_by_description(event.getNewValue().toString()).getId(), 
                     data_table.getSelectionModel().getSelectedItem().getConnection_info()
                 );
                 break;
@@ -515,8 +563,8 @@ public class MainController {
                 AppSettings.put_rdp(
                     data_table.getSelectionModel().getSelectedItem().getId(), 
                     data_table.getSelectionModel().getSelectedItem().getDescription(), 
-                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId().toString(), 
-                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId().toString(), 
+                    AppSettings.get_types_by_description(data_table.getSelectionModel().getSelectedItem().getTypes_description()).getId(), 
+                    AppSettings.get_company_by_description(data_table.getSelectionModel().getSelectedItem().getCompany_description()).getId(), 
                     event.getNewValue().toString()
                 );
                 break;

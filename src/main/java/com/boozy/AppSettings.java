@@ -52,7 +52,8 @@ public class AppSettings {
             prepared_statement = connection.prepareStatement("select * from types");
             result_set = prepared_statement.executeQuery();
             if (!result_set.next()){
-
+                
+                statement.execute("INSERT INTO types(description) values(\"Empty\")");
                 statement.execute("INSERT INTO types(description) values(\"TeamViewer\")");
                 statement.execute("INSERT INTO types(description) values(\"Anydesk\")");
                 statement.execute("INSERT INTO types(description) values(\"RDP\")");
@@ -73,6 +74,17 @@ public class AppSettings {
 
             }
 
+            /* company */
+            prepared_statement = null;
+            result_set = null;
+            prepared_statement = connection.prepareStatement("select * from company");
+            result_set = prepared_statement.executeQuery();
+            if (!result_set.next()){
+
+                statement.execute("INSERT INTO company(description) values(\"Empty\")");
+
+            }
+
             statement.close();
 
         } catch (Exception e) {
@@ -84,13 +96,13 @@ public class AppSettings {
 
 
     /* RDP */
-    public static void post_rdp(String description, String types_id, String company_id, String connection_info){
+    public static void post_rdp(String description, Integer types_id, Integer company_id, String connection_info){
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
-            System.out.println("INSERT INTO rdp (description,types_id,company_id,connection_info) VALUES (" + String.format("'%s', %s, %s, '%s'", description, types_id, company_id , connection_info) + ")");
+            System.out.println("INSERT INTO rdp (description,types_id,company_id,connection_info) VALUES (" + String.format("'%s', %d, %d, '%s'", description, types_id, company_id , connection_info) + ")");
             /* post into rdp */
             Statement statement = connection.createStatement();
-            statement.execute("INSERT INTO rdp (description,types_id,company_id,connection_info) VALUES (" + String.format("'%s', %s, %s, '%s'", description, types_id, company_id , connection_info) + ")");
+            statement.execute("INSERT INTO rdp (description,types_id,company_id,connection_info) VALUES (" + String.format("'%s', %d, %d, '%s'", description, types_id, company_id , connection_info) + ")");
             
             statement.close();
             
@@ -102,7 +114,7 @@ public class AppSettings {
 
     }
 
-    public static void put_rdp(String id, String description, String types_id, String company_id, String connection_info){
+    public static void put_rdp(String id, String description, Integer types_id, Integer company_id, String connection_info){
 
         try(Connection connection = DriverManager.getConnection(jdbc_string)) {
             
@@ -111,7 +123,7 @@ public class AppSettings {
             statement.execute(
                 String.
                     format(
-                    "update rdp set description = '%s', types_id = %s, company_id = %s, connection_info = '%s' where rdp.id = %s", 
+                    "update rdp set description = '%s', types_id = %d, company_id = %d, connection_info = '%s' where rdp.id = %s", 
                             description, types_id, company_id, connection_info, id
                         )
                 );
