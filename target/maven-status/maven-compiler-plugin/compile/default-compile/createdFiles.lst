@@ -1,0 +1,13 @@
+com\boozy\controllers\SettingsController.class
+com\boozy\controllers\CompanyController.class
+com\boozy\tables\Types.class
+com\boozy\AppSettings.class
+com\boozy\controllers\CredentialsController.class
+com\boozy\tables\Credentials.class
+com\boozy\App.class
+com\boozy\controllers\TypesController.class
+com\boozy\tables\Company.class
+com\boozy\tables\view\RdpView.class
+com\boozy\tables\Rdp.class
+com\boozy\controllers\MainController.class
+com\boozy\tables\Settings.class

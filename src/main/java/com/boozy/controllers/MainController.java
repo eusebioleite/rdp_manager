@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.boozy.App;
 import com.boozy.AppSettings;
@@ -35,6 +37,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 
 public class MainController {
 
+    private static ExecutorService executor = Executors.newCachedThreadPool();
     /* menus */
     @FXML
     private MenuItem menu_types = new MenuItem();
@@ -471,56 +474,57 @@ public class MainController {
     }
 
     public void runCommand(String command, String identifier, String path){
-
-        try{
-
-            /* execute command */
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(System.getProperty("user.home")));
-
-            String[] commands = command.split(" ");
-            for (int i = 0; i < commands.length; i++) {
-
-                if(commands[i].equals(identifier)) commands[i] = path;
-
-            }
-
-            processBuilder.command(commands);
-            Process process = processBuilder.start();
-
-            /* display output */
-            StringBuilder output_input = new StringBuilder();
-            BufferedReader reader_input = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader_input.readLine()) != null) {
-
-                output_input.append(line + "\n");
-
-            }
-            System.out.println(output_input);
+        
+        Runnable runnable = new Runnable() {
             
-            /* display error */
-            StringBuilder output_error = new StringBuilder();
-            BufferedReader reader_error = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String line_error;
-            while ((line_error = reader_error.readLine()) != null) {
+            public void run(){
 
-                output_error.append(line_error + "\n");
+                try {
+
+                    /* execute command */
+                    ProcessBuilder processBuilder = new ProcessBuilder();
+                    processBuilder.redirectErrorStream(true);
+                    processBuilder.directory(new File(System.getProperty("user.home")));
+                    
+                    String[] commands = command.split(" ");
+                    for (int i = 0; i < commands.length; i++) {
+        
+                        if(commands[i].equals(identifier)) commands[i] = path;
+        
+                    }
+        
+                    processBuilder.command(commands);
+                    Process process = processBuilder.start();
+        
+                    /* display output */
+                    BufferedReader reader_input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line;
+                    while ((line = reader_input.readLine()) != null) {
+        
+                        System.out.println("tasklist: " + line);
+        
+                    }
+        
+                    process.waitFor();
+        
+                    } catch (IOException ioe) {
+        
+                        ioe.printStackTrace();
+        
+                    } catch (IllegalThreadStateException itse) {
+        
+                        itse.printStackTrace();
+        
+                    } catch (InterruptedException ie) {
+                        
+                        ie.printStackTrace();
+                    }
 
             }
-            System.out.println(output_error);
 
-            process.waitFor();
+        };
 
-            } catch (IOException e) {
-
-                System.out.println(e.getMessage());
-
-            } catch (InterruptedException e) {
-
-                System.out.println(e.getMessage());
-
-            }
+        executor.submit(runnable);
 
     }
 
@@ -652,4 +656,7 @@ public class MainController {
 
     }
 
+    public void shutdown(){
+        executor.shutdown();
+    }
 }
